@@ -7,12 +7,12 @@ Read `CONTRACT.md` first — it's the agreement between all three parts of this 
 ```
 skyguard-ai/
 ├── CONTRACT.md      <- the API/DB contract everyone follows
-├── backend/         <- P2: FastAPI + PostgreSQL
-├── ml/              <- P3: anomaly detection + synthetic data
-└── frontend/        <- P1: React dashboard
+├── backend/         <- Sarika: FastAPI + PostgreSQL
+├── ml/              <- Arpit: anomaly detection + synthetic data
+└── frontend/        <- Nishita: React dashboard
 ```
 
-## 1. Backend setup (P2)
+## 1. Backend setup (Sarika)
 
 ```bash
 cd backend
@@ -41,7 +41,7 @@ uvicorn main:app --reload --port 8000
 Visit `http://localhost:8000/docs` to see and test the API interactively — this is the
 fastest way to check your endpoints without waiting for the frontend to be ready.
 
-## 2. ML setup (P3)
+## 2. ML setup (Arpit)
 
 ```bash
 cd ml
@@ -60,7 +60,7 @@ pip install requests
 python data_simulator.py --live
 ```
 
-## 3. Frontend setup (P1)
+## 3. Frontend setup (Nishita)
 
 Requires Node.js installed.
 
@@ -76,7 +76,7 @@ backend is running on port 8000 first (see above).
 The dashboard has three "Simulate a fault" buttons at the top — use these to trigger
 an anomaly live during your demo without waiting for the random simulator timing.
 
-## Suggested build order (see the Team Leader Playbook for the full hour-by-hour plan)
+## Suggested build order 
 
 1. Backend: get `/api/ingest` saving to the DB (fake ML result is fine at first).
 2. Frontend: get the dashboard rendering `/api/stations/live`, even with fake data.
