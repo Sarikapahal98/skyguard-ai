@@ -52,6 +52,5 @@ class AlertOut(BaseModel):
     acknowledged: bool
     created_at: str
 
-
 class AlertsResponse(BaseModel):
     alerts: list[AlertOut]
