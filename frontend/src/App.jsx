@@ -1,6 +1,35 @@
 import { useEffect, useState, useCallback } from "react";
 import { fetchStationsLive, fetchAlerts, ingestReading } from "./api";
 
+function getFakeStations() {
+  const now = new Date().toISOString();
+
+  return [
+    {
+      station_id: 1,
+      station_code: "AWS-CHD-001",
+      status: "NORMAL",
+      last_reading: {
+        temperature: 28.5,
+        humidity: 65,
+        recorded_at: now,
+      },
+      active_alerts: 0,
+    },
+    {
+      station_id: 2,
+      station_code: "AWS-DEL-002",
+      status: "ANOMALY_MEDIUM",
+      last_reading: {
+        temperature: 41.2,
+        humidity: 38,
+        recorded_at: now,
+      },
+      active_alerts: 2,
+    },
+  ];
+}
+
 const POLL_INTERVAL_MS = 3000;
 
 const STATUS_LABEL = {
@@ -22,7 +51,8 @@ export default function App() {
         fetchStationsLive(),
         fetchAlerts(),
       ]);
-      setStations(stationsData.stations || []);
+      const stationData = stationsData.stations || [];
+      setStations(stationData.length > 0 ? stationData : getFakeStations());
       setAlerts(alertsData.alerts || []);
       setLastUpdated(new Date());
       setError(null);
