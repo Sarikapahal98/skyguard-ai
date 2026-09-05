@@ -7,7 +7,7 @@ telling the team.
 
 Until model.joblib exists (run train_model.py to create it), this falls back
 to a simple rule-based check, so P1/P2 can build and demo against it on day 1
-without waiting for the real model.
+without waiting for real model.
 """
 import os
 import joblib
