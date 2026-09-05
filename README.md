@@ -33,7 +33,7 @@ variable before running the server:
 export DATABASE_URL="postgresql://YOUR_USER:YOUR_PASSWORD@localhost:5432/skyguard"
 ```
 
-Run the server:
+Run the server:  
 ```bash
 uvicorn main:app --reload --port 8000
 ```
