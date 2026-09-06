@@ -16,9 +16,16 @@ import argparse
 import random
 import time
 import requests
+import random
 
 
-STATION_CODE = "AWS-CHD-001"
+STATIONS = [
+    {"code": "AWS-DELHI-01", "lat": 28.61, "lon": 77.21},
+    {"code": "AWS-MUM-01",   "lat": 19.07, "lon": 72.87},
+    {"code": "AWS-CHN-01",   "lat": 13.08, "lon": 80.27},
+    {"code": "AWS-PUN-01",   "lat": 18.52, "lon": 73.86},
+    {"code": "AWS-KOL-01",   "lat": 22.57, "lon": 88.36},
+]
 BACKEND_URL = "http://localhost:8000/api/ingest"
 
 
@@ -33,12 +40,12 @@ BASELINE = {
 
 _last_reading = dict(BASELINE)
 
-
+station = random.choice(STATIONS)
 def normal_reading() -> dict:
     """Generate a realistic normal weather station reading."""
 
     return {
-        "station_code": STATION_CODE,
+        "station_code": station["code"],
 
         "temperature": round(
             BASELINE["temperature"] + random.uniform(-2, 2),
