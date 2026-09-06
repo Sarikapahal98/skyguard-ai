@@ -12,6 +12,7 @@ without waiting for real model.
 import os
 import joblib
 import numpy as np
+import pandas as pd
 
 FEATURES = ["temperature", "humidity", "pressure", "rainfall", "wind_speed"]
 
@@ -72,7 +73,12 @@ def _model_score(reading: dict) -> float | None:
     """Uses the trained IsolationForest, if available, to get an anomaly score."""
     if _model is None:
         return None
-    x = np.array([[reading.get(f, 0.0) or 0.0 for f in FEATURES]])
+    x = pd.DataFrame(
+    [[reading.get(f, 0.0) or 0.0 for f in FEATURES]],
+    columns=FEATURES,
+    )
+
+
     # IsolationForest: decision_function is higher = more normal, so we flip and normalize.
     raw = _model.decision_function(x)[0]
     score = float(np.clip(0.5 - raw, 0.0, 1.0))
