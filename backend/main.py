@@ -20,6 +20,17 @@ from database import engine, get_db, Base
 import models
 import schemas
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Reads variables from the local .env file
+
+# No personal passwords hardcoded here anymore!
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://postgres:postgres@localhost:5432/skyguard"
+)
+
 # --- Make the sibling ml/ folder importable ---
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "ml"))
 from detect import detect_anomaly  # noqa: E402  (P3 owns this function)
