@@ -40,10 +40,10 @@ BASELINE = {
 
 _last_reading = dict(BASELINE)
 
-station = random.choice(STATIONS)
 def normal_reading() -> dict:
     """Generate a realistic normal weather station reading."""
-
+    station = random.choice(STATIONS)   # moved inside
+    
     return {
         "station_code": station["code"],
 
