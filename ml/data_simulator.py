@@ -20,60 +20,28 @@ import random
 
 
 STATIONS = [
-    {"code": "AWS-DELHI-01", "lat": 28.61, "lon": 77.21},
-    {"code": "AWS-MUM-01",   "lat": 19.07, "lon": 72.87},
-    {"code": "AWS-CHN-01",   "lat": 13.08, "lon": 80.27},
-    {"code": "AWS-PUN-01",   "lat": 18.52, "lon": 73.86},
-    {"code": "AWS-KOL-01",   "lat": 22.57, "lon": 88.36},
+    {"code": "AWS-CHN-01", "lat": 13.00, "lon": 80.18, "baseline": {"temperature": 28.5, "humidity": 70, "pressure": 1010, "rainfall": 3.6, "wind_speed": 10}},
+    {"code": "AWS-AMD-01", "lat": 23.03, "lon": 72.58, "baseline": {"temperature": 27.7, "humidity": 45, "pressure": 1008, "rainfall": 2.2, "wind_speed": 9}},
+    {"code": "AWS-BLR-01", "lat": 12.97, "lon": 77.59, "baseline": {"temperature": 23.8, "humidity": 60, "pressure": 1013, "rainfall": 2.6, "wind_speed": 7}},
+    {"code": "AWS-CHD-01", "lat": 30.74, "lon": 76.79, "baseline": {"temperature": 23.5, "humidity": 55, "pressure": 1010, "rainfall": 2.9, "wind_speed": 8}},
+    {"code": "AWS-DEH-01", "lat": 30.32, "lon": 78.03, "baseline": {"temperature": 21.6, "humidity": 65, "pressure": 1009, "rainfall": 6.1, "wind_speed": 6}},
+    {"code": "AWS-BHO-01", "lat": 23.26, "lon": 77.41, "baseline": {"temperature": 25.2, "humidity": 50, "pressure": 1011, "rainfall": 3.1, "wind_speed": 8}},
+    {"code": "AWS-CHP-01", "lat": 25.30, "lon": 91.70, "baseline": {"temperature": 17.3, "humidity": 90, "pressure": 1012, "rainfall": 30.7, "wind_speed": 12}},
+    {"code": "AWS-BIK-01", "lat": 28.02, "lon": 73.31, "baseline": {"temperature": 26.5, "humidity": 30, "pressure": 1007, "rainfall": 0.9, "wind_speed": 11}},
 ]
 BACKEND_URL = "http://localhost:8000/api/ingest"
 
-
-BASELINE = {
-    "temperature": 28.0,
-    "humidity": 55.0,
-    "pressure": 1010.0,
-    "rainfall": 0.0,
-    "wind_speed": 8.0,
-}
-
-
-_last_reading = dict(BASELINE)
-
-def normal_reading() -> dict:
-    """Generate a realistic normal weather station reading."""
-    station = random.choice(STATIONS)   # moved inside
-    
+_last_reading = dict(STATIONS[0]["baseline"])
+def normal_reading():
+    station = random.choice(STATIONS)
+    b = station["baseline"]
     return {
         "station_code": station["code"],
-
-        "temperature": round(
-            BASELINE["temperature"] + random.uniform(-2, 2),
-            1
-        ),
-
-        "humidity": round(
-            BASELINE["humidity"] + random.uniform(-5, 5),
-            1
-        ),
-
-        "pressure": round(
-            BASELINE["pressure"] + random.uniform(-1.5, 1.5),
-            1
-        ),
-
-        "rainfall": round(
-            max(0, random.uniform(-0.2, 0.5)),
-            1
-        ),
-
-        "wind_speed": round(
-            max(
-                0,
-                BASELINE["wind_speed"] + random.uniform(-2, 2)
-            ),
-            1
-        ),
+        "temperature": round(b["temperature"] + random.uniform(-2, 2), 1),
+        "humidity": round(b["humidity"] + random.uniform(-5, 5), 1),
+        "pressure": round(b["pressure"] + random.uniform(-1.5, 1.5), 1),
+        "rainfall": round(max(0, b["rainfall"] + random.uniform(-0.5, 1.0)), 1),
+        "wind_speed": round(b["wind_speed"] + random.uniform(-2, 2), 1),
     }
 
 

@@ -25,11 +25,7 @@ import os
 
 load_dotenv()  # Reads variables from the local .env file
 
-# No personal passwords hardcoded here anymore!
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/skyguard"
-)
+DATABASE_URL="postgresql://postgres:Skyguard@5498@db.ckacvnoojbwdjvgunrbv.supabase.co:5432/postgres"
 
 # --- Make the sibling ml/ folder importable ---
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "ml"))
