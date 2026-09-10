@@ -68,6 +68,34 @@ def _update_history(reading: dict):
         if len(history) > _HISTORY_LEN:
             history.pop(0)
 
+_baseline_avg: dict[tuple[str, str], float] = {}
+_DRIFT_ALPHA = 0.05
+_DRIFT_THRESHOLDS = {
+    "temperature": 5.0,
+    "humidity": 10.0,
+    "pressure": 4.0,
+    "rainfall": 2.0,
+    "wind_speed": 5.0,
+}
+
+
+def _check_drift(reading: dict) -> tuple[str, float] | None:
+    station = reading.get("station_code", "UNKNOWN")
+    for param in FEATURES:
+        value = reading.get(param)
+        if value is None:
+            continue
+        key = (station, param)
+        if key not in _baseline_avg:
+            _baseline_avg[key] = value
+            continue
+        deviation = abs(value - _baseline_avg[key])
+        _baseline_avg[key] = (1 - _DRIFT_ALPHA) * _baseline_avg[key] + _DRIFT_ALPHA * value
+        threshold = _DRIFT_THRESHOLDS[param]
+        if deviation > threshold:
+            return param, min(0.6 + deviation / (threshold * 6), 0.9)
+    return None
+
 
 def _model_score(reading: dict) -> float | None:
     """Uses the trained IsolationForest, if available, to get an anomaly score."""
@@ -126,7 +154,21 @@ def detect_anomaly(reading: dict) -> dict:
             "is_severe": False,
         }
 
-    # 3. ML model score (catches spikes/drift the rules above don't)
+    # 3. Drift check (slow, consistent movement away from baseline)
+    drift_hit = _check_drift(reading)
+    if drift_hit:
+        param, score = drift_hit
+        _update_history(reading)
+        return {
+            "anomaly_detected": True,
+            "anomaly_type": "DRIFT",
+            "anomaly_score": score,
+            "parameter": param,
+            "is_severe": score >= 0.8,
+        }
+
+
+    # 4. ML model score (catches spikes/drift the rules above don't)
     model_score = _model_score(reading)
     _update_history(reading)
 
@@ -139,7 +181,7 @@ def detect_anomaly(reading: dict) -> dict:
             "is_severe": model_score >= 0.8,
         }
 
-    # 4. Nothing unusual
+    # 5. Nothing unusual
     return {
         "anomaly_detected": False,
         "anomaly_type": "NONE",
