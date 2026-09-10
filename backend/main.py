@@ -191,6 +191,26 @@ def get_alerts(db: Session = Depends(get_db)):
         ]
     )
 
+@app.get("/api/stations/{station_id}/history")
+def station_history(station_id: int, limit: int = 50, db: Session = Depends(get_db)):
+    readings = (
+        db.query(models.SensorReading)
+        .filter(models.SensorReading.station_id == station_id)
+        .order_by(desc(models.SensorReading.recorded_at))
+        .limit(limit)
+        .all()
+    )
+    return {
+        "station_id": station_id,
+        "readings": [
+            {
+                "recorded_at": r.recorded_at.isoformat(),
+                "temperature": r.temperature,
+                "humidity": r.humidity,
+            }
+            for r in reversed(readings)
+        ],
+    }
 
 @app.get("/")
 def root():
