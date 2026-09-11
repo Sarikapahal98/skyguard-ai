@@ -211,6 +211,18 @@ def station_history(station_id: int, limit: int = 50, db: Session = Depends(get_
         ],
     }
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://skyguard-ai-one.vercel.app",
+        "http://localhost:5173",
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 def root():
     return {"message": "SkyGuard AI backend is running. See /docs for the API."}
