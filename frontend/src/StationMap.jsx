@@ -9,16 +9,21 @@ const STATUS_COLOR = {
 };
 
 export default function StationMap({ stations }) {
-  const center = stations.length
-    ? [stations[0].latitude, stations[0].longitude]
+  const validStations = stations.filter(
+    (s) => typeof s.latitude === "number" && typeof s.longitude === "number"
+  );
+
+  const center = validStations.length
+    ? [validStations[0].latitude, validStations[0].longitude]
     : [22.9734, 78.6569]; // fallback: center of India
 
-    console.log("stations passed to map:", stations);
+  console.log("stations passed to map:", stations);
+  console.log("valid stations after filtering:", validStations);
 
   return (
     <MapContainer center={center} zoom={5} style={{ height: "400px", width: "100%" }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      {stations.map((s) => (
+      {validStations.map((s) => (
         <CircleMarker
           key={s.station_id}
           center={[s.latitude, s.longitude]}
