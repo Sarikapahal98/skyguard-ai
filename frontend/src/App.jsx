@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchStationsLive, fetchAlerts, ingestReading } from "./api";
+import { fetchStationsLive, fetchAlerts, ingestReading, fetchStationHistory } from "./api";
+import TrendChart from "./TrendChart";
 import StationMap from "./StationMap";
 
 function getFakeStations() {
@@ -45,6 +46,8 @@ export default function App() {
   const [alerts, setAlerts] = useState([]);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [selectedStationId, setSelectedStationId] = useState(null);
+  const [history, setHistory] = useState([]);
 
   const refresh = useCallback(async () => {
     try {
@@ -71,25 +74,37 @@ export default function App() {
   // Demo helper: fires an obviously-faulty reading so you can show the jury
   // detection happening live, without waiting for the simulator's random timing.
   async function simulateFault(type) {
-    const base = {
-      station_code: "AWS-CHD-001",
-      temperature: 28.0,
-      humidity: 55.0,
-      pressure: 1010.0,
-      rainfall: 0.0,
-      wind_speed: 8.0,
-    };
-    if (type === "spike") base.temperature = 62.0;
-    if (type === "flatline") base.humidity = 55.0; // send repeatedly to trigger flatline logic
-    if (type === "out_of_range") base.pressure = 1400.0;
+  const base = {
+    station_code: "AWS-CHD-01",
+    temperature: 28.0,
+    humidity: 55.0,
+    pressure: 1010.0,
+    rainfall: 0.0,
+    wind_speed: 8.0,
+  };
 
-    try {
-      await ingestReading(base);
-      await refresh();
-    } catch (err) {
-      setError(err.message);
+  try {
+    if (type === "spike") {
+      await ingestReading({ ...base, temperature: 62.0 });
+    } else if (type === "flatline") {
+      // Needs 4 identical consecutive readings to trip _check_flatline
+      for (let i = 0; i < 4; i++) {
+        await ingestReading({ ...base, humidity: 55.0 });
+      }
+    } else if (type === "out_of_range") {
+      await ingestReading({ ...base, pressure: 1400.0 });
     }
+    await refresh();
+  } catch (err) {
+    setError(err.message);
   }
+}
+
+  async function selectStation(stationId) {
+  setSelectedStationId(stationId);
+  const data = await fetchStationHistory(stationId);
+  setHistory(data.readings || []);
+}
 
   return (
     <div className="app">
@@ -128,7 +143,9 @@ export default function App() {
             </thead>
             <tbody>
               {stations.map((s) => (
-                <tr key={s.station_id} className={`row row--${s.status}`}>
+                <tr key={s.station_id} className={`row row--${s.status}`}
+                onClick={() => selectStation(s.station_id)}
+                style={{ cursor: "pointer" }}>
                   <td>{s.station_code}</td>
                   <td>{STATUS_LABEL[s.status] || s.status}</td>
                   <td>{s.last_reading?.temperature ?? "—"}</td>
@@ -151,6 +168,12 @@ export default function App() {
               )}
             </tbody>
           </table>
+          {selectedStationId && (
+            <div style={{ marginTop: "16px" }}>
+              <h3>History for station {selectedStationId}</h3>
+              <TrendChart data={history} />
+            </div>
+          )}
         </section>
 
         <section className="panel">
