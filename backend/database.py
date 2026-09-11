@@ -16,7 +16,11 @@ DATABASE_URL = os.getenv(
     "postgresql://postgres:postgres@localhost:5432/skyguard"
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,   # tests each connection before using it, reconnects if dead
+    pool_recycle=300,     # recycle connections every 5 minutes, before Neon kills them
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
