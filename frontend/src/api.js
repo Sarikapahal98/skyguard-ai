@@ -1,7 +1,7 @@
 // Every call to the backend goes through here — one place to change the URL,
 // one place that mirrors CONTRACT.md's response shapes.
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export async function fetchStationsLive() {
   const res = await fetch(`${BASE_URL}/api/stations/live`);
