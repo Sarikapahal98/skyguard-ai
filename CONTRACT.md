@@ -90,6 +90,8 @@ Frontend/simulator sends a raw sensor reading. Backend saves it, calls ML, saves
 ```json
 {
   "station_code": "AWS-CHD-001",
+  "latitude": 30.74,
+  "longitude": 76.79,
   "temperature": 38.4,
   "humidity": 62.1,
   "pressure": 1008.3,
@@ -165,3 +167,4 @@ Frontend polls this (every few seconds) to render the dashboard.
 3. `anomaly_score` is always a float from 0.0 to 1.0, never a raw/unbounded number.
 4. If you need to change any shape above, message the group chat first — don't silently change it in your own folder.
 5. Backend URL during development: `http://localhost:8000`. Frontend calls this directly (CORS is enabled in the backend skeleton already).
+6. `latitude`/`longitude` in POST /api/ingest are optional — if omitted, the station falls back to a default coordinate on first creation. Always send real values when known (see ml/data_simulator.py's STATIONS list).
