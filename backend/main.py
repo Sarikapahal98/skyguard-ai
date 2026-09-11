@@ -49,15 +49,14 @@ app.add_middleware(
 )
 
 
-def get_or_create_station(db: Session, station_code: str) -> models.Station:
+def get_or_create_station(db: Session, station_code: str, latitude: float = 30.74, longitude: float = 76.79) -> models.Station:
     station = db.query(models.Station).filter_by(station_code=station_code).first()
     if station is None:
-        # Auto-create a demo station so the simulator can just start sending data.
         station = models.Station(
             station_code=station_code,
             name=station_code,
-            latitude=30.74,
-            longitude=76.79,
+            latitude=latitude,
+            longitude=longitude,
             status="ACTIVE",
         )
         db.add(station)
@@ -76,7 +75,7 @@ def severity_from_score(score: float) -> str:
 
 @app.post("/api/ingest", response_model=schemas.IngestResponse)
 def ingest_reading(payload: schemas.IngestRequest, db: Session = Depends(get_db)):
-    station = get_or_create_station(db, payload.station_code)
+    station = get_or_create_station(db, payload.station_code, payload.latitude, payload.longitude)
 
     reading = models.SensorReading(
         station_id=station.station_id,

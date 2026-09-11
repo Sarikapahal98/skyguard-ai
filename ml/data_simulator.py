@@ -37,6 +37,8 @@ def normal_reading():
     b = station["baseline"]
     return {
         "station_code": station["code"],
+        "latitude": station["lat"],
+        "longitude": station["lon"],
         "temperature": round(b["temperature"] + random.uniform(-2, 2), 1),
         "humidity": round(b["humidity"] + random.uniform(-5, 5), 1),
         "pressure": round(b["pressure"] + random.uniform(-1.5, 1.5), 1),

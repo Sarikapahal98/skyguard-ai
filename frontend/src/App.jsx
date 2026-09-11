@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { fetchStationsLive, fetchAlerts, ingestReading } from "./api";
+import StationMap from "./StationMap";
 
 function getFakeStations() {
   const now = new Date().toISOString();
@@ -113,13 +114,13 @@ export default function App() {
       <main className="app__grid">
         <section className="panel">
           <h2>Stations</h2>
-          {/* TODO (P1): swap this table for a Leaflet map with color-coded markers */}
+          <StationMap stations={stations} />
           <table className="station-table">
             <thead>
               <tr>
                 <th>Code</th>
                 <th>Status</th>
-                <th>Temp</th>
+                <th>Temp</th>s
                 <th>Humidity</th>
                 <th>Last reading</th>
                 <th>Active alerts</th>

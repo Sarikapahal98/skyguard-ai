@@ -8,6 +8,8 @@ from typing import Optional
 
 class IngestRequest(BaseModel):
     station_code: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     temperature: Optional[float] = None
     humidity: Optional[float] = None
     pressure: Optional[float] = None
