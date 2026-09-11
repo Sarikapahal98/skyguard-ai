@@ -25,3 +25,9 @@ export async function ingestReading(reading) {
   if (!res.ok) throw new Error(`ingest failed: ${res.status}`);
   return res.json();
 }
+
+export async function fetchStationHistory(stationId) {
+  const res = await fetch(`${BASE_URL}/api/stations/${stationId}/history`);
+  if (!res.ok) throw new Error(`stations/${stationId}/history failed: ${res.status}`);
+  return res.json(); // { station_id, readings: [...] }
+}
