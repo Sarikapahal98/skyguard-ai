@@ -29,7 +29,8 @@ STATIONS = [
     {"code": "AWS-CHP-01", "lat": 25.30, "lon": 91.70, "baseline": {"temperature": 17.3, "humidity": 90, "pressure": 1012, "rainfall": 30.7, "wind_speed": 12}},
     {"code": "AWS-BIK-01", "lat": 28.02, "lon": 73.31, "baseline": {"temperature": 26.5, "humidity": 30, "pressure": 1007, "rainfall": 0.9, "wind_speed": 11}},
 ]
-BACKEND_URL = "http://localhost:8000/api/ingest"
+import os
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000") + "/api/ingest"
 
 _last_reading = dict(STATIONS[0]["baseline"])
 def normal_reading():
