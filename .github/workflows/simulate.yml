@@ -13,4 +13,4 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
-      - run: BACKEND_URL=https://vayugrid.onrender.com python ml/data_simulator.py --live
+      - run: timeout 60 BACKEND_URL=https://vayugrid.onrender.com python ml/data_simulator.py --live || true
